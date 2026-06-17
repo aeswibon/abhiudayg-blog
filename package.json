@@ -1,0 +1,25 @@
+{
+  "name": "abhiudayg-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Personal development blog with RSS, built with Astro and Bun.",
+  "packageManager": "bun@1.3.14",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aeswibon/abhiudayg-blog.git"
+  },
+  "homepage": "https://abhiudayg-blog.vercel.app",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.3",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.7",
+    "sharp": "^0.34.3"
+  }
+}

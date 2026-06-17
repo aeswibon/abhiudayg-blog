@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<style>
+			.intro {
+				margin-bottom: 2.5rem;
+			}
+
+			.post-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				gap: 1rem;
+			}
+
+			.post-list li {
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				background: var(--bg-elevated);
+				transition: border-color 0.15s ease, transform 0.15s ease;
+			}
+
+			.post-list li:hover {
+				border-color: rgba(240, 165, 0, 0.35);
+				transform: translateY(-1px);
+			}
+
+			.post-list a {
+				display: block;
+				padding: 1.25rem 1.5rem;
+				text-decoration: none;
+				color: inherit;
+			}
+
+			.title {
+				margin: 0 0 0.35rem;
+				font-size: 1.25rem;
+				color: var(--text);
+			}
+
+			.description {
+				margin: 0 0 0.75rem;
+				color: var(--text-muted);
+				font-size: 0.98rem;
+			}
+
+			.date {
+				margin: 0;
+				font-family: var(--mono);
+				font-size: 0.8rem;
+				color: var(--accent);
+				letter-spacing: 0.04em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="intro">
+				<p class="eyebrow">Archive</p>
+				<h1>Blog</h1>
+				<p class="lead">Everything I've published on this journey, newest first.</p>
+			</section>
+
+			<ul class="post-list">
+				{
+					posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`}>
+								<p class="date">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+								<h2 class="title">{post.data.title}</h2>
+								<p class="description">{post.data.description}</p>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

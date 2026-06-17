@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+import { AUTHOR_NAME, SITE_DESCRIPTION } from '../consts';
+---
+
+<Layout
+	title="About"
+	description="Who writes this blog and why it exists."
+	pubDate={new Date('2026-06-17')}
+>
+	<p>
+		Hi — I'm <strong>{AUTHOR_NAME}</strong>. I started this site to keep a running record of my
+		development journey: the ideas I try, the bugs I chase, and the small wins that don't always
+		make it into a README.
+	</p>
+
+	<p>
+		Most posts will be practical. Less polished essay, more engineer's notebook — what I built,
+		what I changed my mind about, and what I'd do differently next time.
+	</p>
+
+	<p>
+		If you want to follow along without checking back manually, grab the
+		<a href="/rss.xml">RSS feed</a>. That's the main way this site is meant to be read.
+	</p>
+
+	<p class="meta">{SITE_DESCRIPTION}</p>
+</Layout>
+
+<style>
+	.meta {
+		font-family: var(--mono);
+		font-size: 0.9rem;
+		color: var(--text-muted);
+	}
+</style>
