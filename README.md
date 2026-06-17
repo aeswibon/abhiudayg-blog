@@ -70,15 +70,15 @@ src/
 
 ## Deployment
 
-Deployments are handled by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Pushes to `main` trigger [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which:
 
-Required GitHub repository secrets:
+1. Installs dependencies with Bun
+2. Builds the site
+3. Triggers a Vercel production deploy via deploy hook
 
-| Secret | Description |
-|--------|-------------|
-| `VERCEL_TOKEN` | Vercel personal access token |
-| `VERCEL_ORG_ID` | Vercel team/user ID |
-| `VERCEL_PROJECT_ID` | Vercel project ID |
+The project is also connected to Vercel Git for automatic deployments on push.
+
+Required GitHub secret: `VERCEL_DEPLOY_HOOK` (already configured).
 
 ## License
 

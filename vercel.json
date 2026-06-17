@@ -4,5 +4,10 @@
   "devCommand": "bun dev",
   "installCommand": "bun install",
   "outputDirectory": "dist",
-  "framework": "astro"
+  "framework": "astro",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }
