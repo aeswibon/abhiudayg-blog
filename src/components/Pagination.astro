@@ -1,0 +1,68 @@
+---
+import { paginationHref } from '../utils/blog';
+
+interface Props {
+	currentPage: number;
+	totalPages: number;
+	basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+if (totalPages <= 1) {
+	return null;
+}
+
+const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+const showPages =
+	totalPages <= 7
+		? pages
+		: pages.filter((page) => {
+				if (page === 1 || page === totalPages) return true;
+				return Math.abs(page - currentPage) <= 1;
+			});
+---
+
+<nav class="pagination" aria-label="Pagination">
+	{
+		currentPage > 1 ? (
+			<a class="pagination-control" href={paginationHref(basePath, currentPage - 1)} rel="prev">
+				← Newer
+			</a>
+		) : (
+			<span class="pagination-control pagination-control-disabled">← Newer</span>
+		)
+	}
+
+	<div class="pagination-pages" aria-label="Pages">
+		{
+			showPages.map((page, index) => {
+				const previous = showPages[index - 1];
+				const needsEllipsis = previous !== undefined && page - previous > 1;
+
+				return (
+					<>
+						{needsEllipsis && <span class="pagination-ellipsis" aria-hidden="true">…</span>}
+						<a
+							class:list={['pagination-page', { 'pagination-page-active': page === currentPage }]}
+							href={paginationHref(basePath, page)}
+							aria-current={page === currentPage ? 'page' : undefined}
+						>
+							{page}
+						</a>
+					</>
+				);
+			})
+		}
+	</div>
+
+	{
+		currentPage < totalPages ? (
+			<a class="pagination-control" href={paginationHref(basePath, currentPage + 1)} rel="next">
+				Older →
+			</a>
+		) : (
+			<span class="pagination-control pagination-control-disabled">Older →</span>
+		)
+	}
+</nav>

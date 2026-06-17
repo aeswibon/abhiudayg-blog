@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { BLOG_SERIES, type BlogSeriesSlug } from '../consts';
+import FormattedDate from './FormattedDate.astro';
+import PartTag from './PartTag.astro';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	showSeriesTag?: boolean;
+}
+
+const { post, showSeriesTag = true } = Astro.props;
+const { title, description, pubDate, series, seriesPart } = post.data;
+const seriesMeta = series ? BLOG_SERIES[series as BlogSeriesSlug] : null;
+---
+
+<li>
+	<a class="post-card" href={`/blog/${post.id}/`} aria-label={`Read ${title}`}>
+		<div class="mb-4 flex items-start justify-between gap-4">
+			<p class="m-0 shrink-0 font-mono text-[0.78rem] tracking-wide whitespace-nowrap text-accent">
+				<FormattedDate date={pubDate} />
+			</p>
+			{showSeriesTag && seriesMeta && <span class="tag-series">{seriesMeta.title}</span>}
+		</div>
+
+		<div class="post-card-body">
+			<h2 class="post-card-title">{title}</h2>
+			<p class="post-card-description">{description}</p>
+		</div>
+
+		<div class="post-card-footer">
+			{seriesPart ? <PartTag part={seriesPart} /> : null}
+		</div>
+	</a>
+</li>

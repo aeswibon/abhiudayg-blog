@@ -2,96 +2,53 @@
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import JsonLd from '../../components/JsonLd.astro';
+import Pagination from '../../components/Pagination.astro';
+import PostCard from '../../components/PostCard.astro';
+import SeriesFilter from '../../components/SeriesFilter.astro';
+import { POSTS_PER_PAGE } from '../../consts';
+import { blogJsonLd, graphJsonLd } from '../../utils/seo';
+import { getSortedPosts, paginatePosts } from '../../utils/blog';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = await getSortedPosts();
+const pagination = paginatePosts(posts, 1, POSTS_PER_PAGE);
+const description =
+	'Technical write-ups on building software in public — architecture, CI, agents, and lessons from the repos I ship.';
+const schema = graphJsonLd(blogJsonLd(Astro.site));
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-		<style>
-			.intro {
-				margin-bottom: 2.5rem;
-			}
-
-			.post-list {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				display: grid;
-				gap: 1rem;
-			}
-
-			.post-list li {
-				border: 1px solid var(--border);
-				border-radius: var(--radius);
-				background: var(--bg-elevated);
-				transition: border-color 0.15s ease, transform 0.15s ease;
-			}
-
-			.post-list li:hover {
-				border-color: var(--accent-border);
-				transform: translateY(-1px);
-			}
-
-			.post-list a {
-				display: block;
-				padding: 1.25rem 1.5rem;
-				text-decoration: none;
-				color: inherit;
-			}
-
-			.title {
-				margin: 0 0 0.35rem;
-				font-size: 1.25rem;
-				color: var(--text);
-			}
-
-			.description {
-				margin: 0 0 0.75rem;
-				color: var(--text-muted);
-				font-size: 0.98rem;
-			}
-
-			.date {
-				margin: 0;
-				font-family: var(--mono);
-				font-size: 0.8rem;
-				color: var(--accent);
-				letter-spacing: 0.04em;
-			}
-		</style>
+		<BaseHead title="Blog" description={description} />
+		<JsonLd schema={schema} />
+		{
+			pagination.totalPages > 1 && (
+				<link rel="next" href="/blog/page/2/" />
+			)
+		}
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section class="intro">
+		<main class="layout-archive">
+			<section class="mb-6">
 				<p class="eyebrow">Archive</p>
 				<h1>Blog</h1>
 				<p class="lead">Everything I've published on this journey, newest first.</p>
 			</section>
 
-			<ul class="post-list">
-				{
-					posts.map((post) => (
-						<li>
-							<a href={`/blog/${post.id}/`}>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-								<h2 class="title">{post.data.title}</h2>
-								<p class="description">{post.data.description}</p>
-							</a>
-						</li>
-					))
-				}
+			<SeriesFilter />
+
+			<ul class="post-grid">
+				{pagination.items.map((post) => <PostCard post={post} />)}
 			</ul>
+
+			<Pagination
+				currentPage={pagination.currentPage}
+				totalPages={pagination.totalPages}
+				basePath="/blog"
+			/>
 		</main>
 		<Footer />
 	</body>

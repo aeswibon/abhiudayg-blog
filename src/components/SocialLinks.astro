@@ -1,5 +1,6 @@
 ---
 import { SOCIAL_LINKS } from '../consts';
+import SocialIcon from './SocialIcon.astro';
 
 interface Props {
 	class?: string;
@@ -8,32 +9,13 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={['social-links', className]}>
+<div class:list={['flex flex-wrap items-center justify-center gap-2.5', className]}>
 	{
 		SOCIAL_LINKS.map((link) => (
-			<a href={link.href} target="_blank" rel="noopener noreferrer">
-				{link.name}
+			<a class="social-btn" href={link.href} target="_blank" rel="noopener noreferrer" title={link.name}>
+				<span class="sr-only">{link.name}</span>
+				<SocialIcon id={link.icon} />
 			</a>
 		))
 	}
 </div>
-
-<style>
-	.social-links {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 1.25rem;
-	}
-
-	.social-links a {
-		color: var(--text-muted);
-		text-decoration: none;
-		font-family: var(--mono);
-		font-size: 0.85rem;
-	}
-
-	.social-links a:hover {
-		color: var(--accent);
-	}
-</style>

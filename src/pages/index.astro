@@ -2,17 +2,22 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import JsonLd from '../components/JsonLd.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { graphJsonLd, websiteJsonLd } from '../utils/seo';
+
+const schema = graphJsonLd(websiteJsonLd(Astro.site));
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<JsonLd schema={schema} />
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main class="layout-archive">
 			<p class="eyebrow">Personal dev log</p>
 			<h1>Documenting the build, one commit at a time.</h1>
 			<p class="lead">
@@ -20,14 +25,14 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				building software. Short notes, longer write-ups, and the occasional rabbit hole.
 			</p>
 
-			<div class="actions">
-				<a class="button button-primary" href="/blog">Read the blog</a>
-				<a class="button" href="/subscribe">Subscribe via RSS</a>
+			<div class="my-8 flex flex-wrap gap-3">
+				<a class="btn btn-primary" href="/blog">Read the blog</a>
+				<a class="btn" href="/subscribe">Subscribe via RSS</a>
 			</div>
 
-			<section class="topics card">
-				<h2>What you'll find here</h2>
-				<ul>
+			<section class="card">
+				<h2 class="mb-3 text-[1.1rem]">What you'll find here</h2>
+				<ul class="m-0 pl-[1.1rem] text-text-muted [&>li+li]:mt-1.5">
 					<li>Project updates and milestones</li>
 					<li>Technical deep-dives and debugging stories</li>
 					<li>Tools, workflows, and things worth remembering</li>
@@ -38,27 +43,3 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<Footer />
 	</body>
 </html>
-
-<style>
-	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		margin: 2rem 0 2.5rem;
-	}
-
-	.topics h2 {
-		font-size: 1.1rem;
-		margin-bottom: 0.75rem;
-	}
-
-	.topics ul {
-		margin: 0;
-		padding-left: 1.1rem;
-		color: var(--text-muted);
-	}
-
-	.topics li + li {
-		margin-top: 0.35rem;
-	}
-</style>

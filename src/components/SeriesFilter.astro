@@ -1,0 +1,110 @@
+---
+import { BLOG_SERIES, BLOG_SERIES_SLUGS } from '../consts';
+
+interface Props {
+	activeSeries?: string | null;
+}
+
+const { activeSeries = null } = Astro.props;
+const basePath = '/blog';
+const activeLabel = activeSeries ? BLOG_SERIES[activeSeries as keyof typeof BLOG_SERIES].title : 'All posts';
+---
+
+<div class="series-filter">
+	<label class="series-filter-label" for="series-search">Series</label>
+	<details class="series-filter-menu">
+		<summary class="series-filter-trigger">
+			<span class="series-filter-current">{activeLabel}</span>
+			<svg class="series-filter-chevron" viewBox="0 0 20 20" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75">
+				<path d="m6 8 4 4 4-4"></path>
+			</svg>
+		</summary>
+
+		<div class="series-filter-panel">
+			<input
+				id="series-search"
+				class="series-filter-search"
+				type="search"
+				placeholder="Search series..."
+				autocomplete="off"
+				spellcheck="false"
+			/>
+
+			<ul class="series-filter-list" role="list">
+				<li class="series-filter-item" data-series-label="all posts">
+					<a
+						class:list={['series-filter-option', { 'series-filter-option-active': !activeSeries }]}
+						href={basePath}
+					>
+						All posts
+					</a>
+				</li>
+				{
+					BLOG_SERIES_SLUGS.map((slug) => (
+						<li class="series-filter-item" data-series-label={BLOG_SERIES[slug].title.toLowerCase()}>
+							<a
+								class:list={['series-filter-option', { 'series-filter-option-active': activeSeries === slug }]}
+								href={`${basePath}/series/${slug}/`}
+							>
+								{BLOG_SERIES[slug].title}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+
+			<p class="series-filter-empty" hidden>No series match your search.</p>
+		</div>
+	</details>
+</div>
+
+<script>
+	function initSeriesFilter(root) {
+		if (root.dataset.seriesFilterInit === 'true') return;
+		root.dataset.seriesFilterInit = 'true';
+		const menu = root.querySelector('.series-filter-menu');
+		const search = root.querySelector('.series-filter-search');
+		const items = root.querySelectorAll('.series-filter-item');
+		const empty = root.querySelector('.series-filter-empty');
+		if (!menu || !search || !empty) return;
+
+		const filterItems = () => {
+			const query = search.value.trim().toLowerCase();
+			let visibleCount = 0;
+
+			items.forEach((item) => {
+				const label = item.getAttribute('data-series-label') ?? '';
+				const matches = !query || label.includes(query);
+				item.hidden = !matches;
+				if (matches) visibleCount += 1;
+			});
+
+			empty.hidden = visibleCount > 0;
+		};
+
+		search.addEventListener('input', filterItems);
+
+		root.querySelectorAll('.series-filter-option').forEach((link) => {
+			link.addEventListener('click', () => {
+				menu.removeAttribute('open');
+			});
+		});
+
+		document.addEventListener('click', (event) => {
+			if (!menu.hasAttribute('open') || !(event.target instanceof Node)) return;
+			if (!root.contains(event.target)) menu.removeAttribute('open');
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && menu.hasAttribute('open')) {
+				menu.removeAttribute('open');
+				search.blur();
+			}
+		});
+	}
+
+	document.querySelectorAll('.series-filter').forEach(initSeriesFilter);
+	document.addEventListener('astro:page-load', () => {
+		document.querySelectorAll('.series-filter').forEach(initSeriesFilter);
+	});
+</script>

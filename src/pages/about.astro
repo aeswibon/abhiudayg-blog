@@ -1,46 +1,55 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import JsonLd from '../components/JsonLd.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import { AUTHOR_NAME, SITE_DESCRIPTION } from '../consts';
+import { aboutPageJsonLd, graphJsonLd } from '../utils/seo';
+
+const description = `About ${AUTHOR_NAME} and why ${SITE_DESCRIPTION.toLowerCase()}`;
+const schema = graphJsonLd(aboutPageJsonLd(Astro.site));
 ---
 
-<Layout
-	title="About"
-	description="Who writes this blog and why it exists."
-	pubDate={new Date('2026-06-17')}
->
-	<p>
-		Hi — I'm <strong>{AUTHOR_NAME}</strong>. I started this site to keep a running record of my
-		development journey: the ideas I try, the bugs I chase, and the small wins that don't always
-		make it into a README.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="About" description={description} />
+		<JsonLd schema={schema} />
+	</head>
+	<body>
+		<Header />
+		<main class="layout-read">
+			<article>
+				<header class="mb-8 border-b border-border pb-6">
+					<p class="eyebrow">About</p>
+					<h1>{AUTHOR_NAME}</h1>
+					<p class="lead">{SITE_DESCRIPTION}</p>
+				</header>
 
-	<p>
-		Most posts will be practical. Less polished essay, more engineer's notebook — what I built,
-		what I changed my mind about, and what I'd do differently next time.
-	</p>
+				<div class="prose-content">
+					<p>
+						Hi — I'm <strong>{AUTHOR_NAME}</strong>. I started this site to keep a running record of my
+						development journey: the ideas I try, the bugs I chase, and the small wins that don't always
+						make it into a README.
+					</p>
 
-	<p>
-		If you want to follow along without checking back manually, visit the
-		<a href="/subscribe">subscribe page</a> or use the
-		<a href="/rss.xml">RSS feed</a> directly in your reader.
-	</p>
+					<p>
+						Most posts will be practical. Less polished essay, more engineer's notebook — what I built,
+						what I changed my mind about, and what I'd do differently next time.
+					</p>
 
-	<p>Find me elsewhere:</p>
-	<SocialLinks class="about-social" />
+					<p>
+						If you want to follow along without checking back manually, visit the
+						<a href="/subscribe">subscribe page</a> or use the
+						<a href="/rss.xml">RSS feed</a> directly in your reader.
+					</p>
 
-	<p class="meta">{SITE_DESCRIPTION}</p>
-</Layout>
-
-<style>
-	.meta {
-		font-family: var(--mono);
-		font-size: 0.9rem;
-		color: var(--text-muted);
-	}
-
-	.about-social {
-		justify-content: flex-start;
-		margin-bottom: 1.5rem;
-	}
-</style>
+					<p>Find me elsewhere:</p>
+					<SocialLinks class="mb-6 justify-start" />
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

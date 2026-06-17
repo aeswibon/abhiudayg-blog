@@ -1,0 +1,69 @@
+<script>
+	function getMermaidTheme() {
+		const theme = document.documentElement.getAttribute('data-theme');
+		if (theme === 'light') return 'neutral';
+		if (theme === 'dark') return 'dark';
+		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'neutral';
+	}
+
+	function extractDiagramText(pre) {
+		const code = pre.querySelector('code');
+		return (code?.textContent ?? pre.textContent ?? '').trim();
+	}
+
+	function prepareMermaidBlocks() {
+		const selectors = [
+			'.prose-content pre > code.language-mermaid',
+			'.prose-content pre[data-language="mermaid"]',
+		];
+
+		for (const selector of selectors) {
+			document.querySelectorAll(selector).forEach((node) => {
+				const pre = node instanceof HTMLElement && node.tagName === 'PRE' ? node : node.parentElement;
+				if (!pre || pre.dataset.mermaidPrepared === 'true') return;
+
+				const diagram = document.createElement('pre');
+				diagram.className = 'mermaid';
+				diagram.dataset.mermaidPrepared = 'true';
+				diagram.textContent = node.tagName === 'CODE' ? node.textContent ?? '' : extractDiagramText(pre);
+				pre.replaceWith(diagram);
+			});
+		}
+	}
+
+	async function renderMermaid() {
+		prepareMermaidBlocks();
+
+		const nodes = document.querySelectorAll('.prose-content pre.mermaid');
+		if (!nodes.length) return;
+
+		const { default: mermaid } = await import('mermaid');
+		mermaid.initialize({
+			startOnLoad: false,
+			theme: getMermaidTheme(),
+			securityLevel: 'loose',
+			fontFamily: 'var(--family-mono)',
+		});
+
+		await mermaid.run({ nodes });
+		nodes.forEach((node) => {
+			node.setAttribute('data-mermaid-rendered', 'true');
+		});
+	}
+
+	function rerenderMermaid() {
+		document.querySelectorAll('.prose-content pre.mermaid[data-mermaid-rendered]').forEach((node) => {
+			const source = node.textContent ?? '';
+			const replacement = document.createElement('pre');
+			replacement.className = 'mermaid';
+			replacement.dataset.mermaidPrepared = 'true';
+			replacement.textContent = source;
+			node.replaceWith(replacement);
+		});
+		renderMermaid();
+	}
+
+	renderMermaid();
+	document.addEventListener('astro:page-load', renderMermaid);
+	document.addEventListener('themechange', rerenderMermaid);
+</script>

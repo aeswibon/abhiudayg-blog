@@ -1,0 +1,76 @@
+---
+import { BLOG_SERIES, BLOG_SERIES_SLUGS } from '../../../consts';
+import { getPostsBySeries, sortSeriesPosts } from '../../../utils/blog';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import Header from '../../../components/Header.astro';
+import JsonLd from '../../../components/JsonLd.astro';
+import PostCard from '../../../components/PostCard.astro';
+import SeriesFilter from '../../../components/SeriesFilter.astro';
+import {
+	absoluteUrl,
+	breadcrumbJsonLd,
+	collectionPageJsonLd,
+	graphJsonLd,
+} from '../../../utils/seo';
+
+export async function getStaticPaths() {
+	return BLOG_SERIES_SLUGS.map((series) => ({
+		params: { series },
+	}));
+}
+
+const { series } = Astro.params;
+const meta = BLOG_SERIES[series as keyof typeof BLOG_SERIES];
+const posts = sortSeriesPosts(await getPostsBySeries(series as keyof typeof BLOG_SERIES));
+const pageUrl = absoluteUrl(`/blog/series/${series}/`, Astro.site);
+const schema = graphJsonLd(
+	collectionPageJsonLd({
+		name: `${meta.title} series`,
+		description: meta.description,
+		url: pageUrl,
+	}),
+	breadcrumbJsonLd([
+		{ name: 'Home', url: absoluteUrl('/', Astro.site) },
+		{ name: 'Blog', url: absoluteUrl('/blog/', Astro.site) },
+		{ name: meta.title, url: pageUrl },
+	]),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${meta.title} series`} description={meta.description} tags={[meta.title, series]} />
+		<JsonLd schema={schema} />
+	</head>
+	<body>
+		<Header />
+		<main class="layout-archive">
+			<section class="mb-6">
+				<p class="eyebrow">Series</p>
+				<h1>{meta.title}</h1>
+				<p class="lead">{meta.description}</p>
+				<div class="mt-4 flex flex-wrap gap-3">
+					<a class="btn" href={meta.repoUrl} target="_blank" rel="noopener noreferrer">
+						View repository
+					</a>
+					<a class="btn" href="/blog/">All posts</a>
+				</div>
+			</section>
+
+			<SeriesFilter activeSeries={series} />
+
+			{
+				posts.length > 0 ? (
+					<ul class="post-grid">
+						{posts.map((post) => <PostCard post={post} showSeriesTag={false} />)}
+					</ul>
+				) : (
+					<p class="text-text-muted">No posts in this series yet.</p>
+				)
+			}
+		</main>
+		<Footer />
+	</body>
+</html>

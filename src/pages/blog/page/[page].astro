@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import Header from '../../../components/Header.astro';
+import Pagination from '../../../components/Pagination.astro';
+import PostCard from '../../../components/PostCard.astro';
+import SeriesFilter from '../../../components/SeriesFilter.astro';
+import { POSTS_PER_PAGE, SITE_TITLE } from '../../../consts';
+import { getExtraPaginationPages, getSortedPosts, paginatePosts } from '../../../utils/blog';
+
+export async function getStaticPaths() {
+	const posts = await getSortedPosts();
+	return getExtraPaginationPages(posts.length, POSTS_PER_PAGE).map((page) => ({
+		params: { page: String(page) },
+	}));
+}
+
+const page = Number(Astro.params.page);
+if (!Number.isInteger(page) || page < 2) {
+	return Astro.redirect('/blog/');
+}
+
+const posts = await getSortedPosts();
+const pagination = paginatePosts(posts, page, POSTS_PER_PAGE);
+
+if (pagination.currentPage !== page) {
+	return Astro.redirect('/blog/');
+}
+
+const description = `Older posts from the ${SITE_TITLE} archive — page ${pagination.currentPage} of ${pagination.totalPages}.`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Blog — page ${pagination.currentPage}`} description={description} />
+		{
+			pagination.currentPage > 1 && (
+				<link rel="prev" href={pagination.currentPage === 2 ? '/blog/' : `/blog/page/${pagination.currentPage - 1}/`} />
+			)
+		}
+		{
+			pagination.currentPage < pagination.totalPages && (
+				<link rel="next" href={`/blog/page/${pagination.currentPage + 1}/`} />
+			)
+		}
+	</head>
+	<body>
+		<Header />
+		<main class="layout-archive">
+			<section class="mb-6">
+				<p class="eyebrow">Archive</p>
+				<h1>Blog</h1>
+				<p class="lead">Everything I've published on this journey, newest first.</p>
+			</section>
+
+			<SeriesFilter />
+
+			<ul class="post-grid">
+				{pagination.items.map((post) => <PostCard post={post} />)}
+			</ul>
+
+			<Pagination
+				currentPage={pagination.currentPage}
+				totalPages={pagination.totalPages}
+				basePath="/blog"
+			/>
+		</main>
+		<Footer />
+	</body>
+</html>
