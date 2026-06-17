@@ -1,5 +1,6 @@
 ---
-import { AUTHOR_NAME, GITHUB_URL, SITE_TITLE } from '../consts';
+import { AUTHOR_NAME, SITE_TITLE } from '../consts';
+import SocialLinks from './SocialLinks.astro';
 
 const today = new Date();
 ---
@@ -10,8 +11,8 @@ const today = new Date();
 	</p>
 	<div class="links">
 		<a href="/subscribe">RSS feed</a>
-		<a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
 	</div>
+	<SocialLinks />
 </footer>
 <style>
 	footer {
@@ -42,5 +43,9 @@ const today = new Date();
 
 	.links a:hover {
 		color: var(--accent);
+	}
+
+	footer :global(.social-links) {
+		margin-top: 0.75rem;
 	}
 </style>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/BlogPost.astro';
+import SocialLinks from '../components/SocialLinks.astro';
 import { AUTHOR_NAME, SITE_DESCRIPTION } from '../consts';
 ---
 
@@ -25,6 +26,9 @@ import { AUTHOR_NAME, SITE_DESCRIPTION } from '../consts';
 		<a href="/rss.xml">RSS feed</a> directly in your reader.
 	</p>
 
+	<p>Find me elsewhere:</p>
+	<SocialLinks class="about-social" />
+
 	<p class="meta">{SITE_DESCRIPTION}</p>
 </Layout>
 
@@ -33,5 +37,10 @@ import { AUTHOR_NAME, SITE_DESCRIPTION } from '../consts';
 		font-family: var(--mono);
 		font-size: 0.9rem;
 		color: var(--text-muted);
+	}
+
+	.about-social {
+		justify-content: flex-start;
+		margin-bottom: 1.5rem;
 	}
 </style>
