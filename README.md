@@ -54,7 +54,7 @@ Optional frontmatter fields:
 | `updatedDate` | When the post was last revised |
 | `heroImage` | Cover image path relative to the post file |
 
-Push to `main` and GitHub Actions builds and deploys to Vercel automatically.
+Push to `master` and GitHub Actions builds and deploys to Vercel automatically.
 
 ## Project structure
 
@@ -70,7 +70,7 @@ src/
 
 ## Deployment
 
-Pushes to `main` trigger [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which:
+Pushes to `master` trigger [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which:
 
 1. Installs dependencies with Bun
 2. Builds the site

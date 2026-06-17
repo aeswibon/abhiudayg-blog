@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'src/content/blog/**'
       - 'src/**'
@@ -40,5 +40,5 @@ jobs:
         run: bun run build
 
       - name: Deploy to Vercel
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: curl --fail-with-body -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"

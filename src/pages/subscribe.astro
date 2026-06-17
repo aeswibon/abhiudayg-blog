@@ -1,0 +1,152 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { RSS_FEED_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const readers = [
+	{
+		name: 'Feedly',
+		href: `https://feedly.com/i/subscription/feed/${encodeURIComponent(RSS_FEED_URL)}`,
+	},
+	{
+		name: 'Inoreader',
+		href: `https://www.inoreader.com/?add_feed=${encodeURIComponent(RSS_FEED_URL)}`,
+	},
+	{
+		name: 'NewsBlur',
+		href: `https://newsblur.com/?url=${encodeURIComponent(RSS_FEED_URL)}`,
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Subscribe | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<p class="eyebrow">Stay updated</p>
+			<h1>Subscribe to the feed</h1>
+			<p class="lead">
+				Browsers no longer subscribe to RSS directly. Copy the feed URL below or open it in your
+				favorite reader.
+			</p>
+
+			<section class="card feed-url-box">
+				<label for="feed-url">Feed URL</label>
+				<div class="feed-url-row">
+					<input id="feed-url" type="text" value={RSS_FEED_URL} readonly />
+					<button type="button" id="copy-feed-url" class="button button-primary">Copy</button>
+				</div>
+				<p class="hint" id="copy-status" aria-live="polite"></p>
+			</section>
+
+			<section class="readers">
+				<h2>Open in a reader</h2>
+				<div class="reader-links">
+					{
+						readers.map((reader) => (
+							<a class="button" href={reader.href} target="_blank" rel="noopener noreferrer">
+								{reader.name}
+							</a>
+						))
+					}
+				</div>
+			</section>
+
+			<section class="card notes">
+				<h2>Using a desktop or mobile app?</h2>
+				<p>
+					Paste the feed URL into apps like NetNewsWire, Reeder, ReadKit, or any RSS reader that
+					supports manual subscription.
+				</p>
+				<p>
+					You can also view the raw feed at <a href={RSS_FEED_URL}>{RSS_FEED_URL}</a>.
+				</p>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<script is:inline>
+	(function () {
+		const input = document.getElementById('feed-url');
+		const button = document.getElementById('copy-feed-url');
+		const status = document.getElementById('copy-status');
+
+		if (!input || !button || !status) return;
+
+		button.addEventListener('click', async () => {
+			const url = input.value;
+
+			try {
+				await navigator.clipboard.writeText(url);
+				status.textContent = 'Feed URL copied to clipboard.';
+			} catch {
+				input.select();
+				document.execCommand('copy');
+				status.textContent = 'Feed URL copied to clipboard.';
+			}
+		});
+	})();
+</script>
+
+<style>
+	.feed-url-box label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-family: var(--mono);
+		font-size: 0.85rem;
+		color: var(--text-muted);
+	}
+
+	.feed-url-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.feed-url-row input {
+		flex: 1 1 16rem;
+		min-width: 0;
+		padding: 0.75rem 0.9rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--bg-subtle);
+		color: var(--text);
+		font-family: var(--mono);
+		font-size: 0.9rem;
+	}
+
+	.hint {
+		margin: 0.75rem 0 0;
+		min-height: 1.25rem;
+		font-family: var(--mono);
+		font-size: 0.85rem;
+		color: var(--accent);
+	}
+
+	.readers {
+		margin: 2rem 0;
+	}
+
+	.readers h2,
+	.notes h2 {
+		font-size: 1.1rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.reader-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.notes p:last-child {
+		margin-bottom: 0;
+	}
+</style>

@@ -1,16 +1,20 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import ThemeToggle from './ThemeToggle.astro';
 ---
 
 <header>
 	<nav>
 		<h2><a href="/">{SITE_TITLE}</a></h2>
-		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
-			<HeaderLink href="/rss.xml">RSS</HeaderLink>
+		<div class="nav-end">
+			<div class="internal-links">
+				<HeaderLink href="/">Home</HeaderLink>
+				<HeaderLink href="/blog">Blog</HeaderLink>
+				<HeaderLink href="/about">About</HeaderLink>
+				<HeaderLink href="/subscribe">RSS</HeaderLink>
+			</div>
+			<ThemeToggle />
 		</div>
 	</nav>
 </header>
@@ -20,7 +24,7 @@ import HeaderLink from './HeaderLink.astro';
 		top: 0;
 		z-index: 10;
 		padding: 0 1rem;
-		background: rgba(12, 13, 16, 0.85);
+		background: var(--header-bg);
 		backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--border);
 	}
@@ -41,8 +45,15 @@ import HeaderLink from './HeaderLink.astro';
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 1rem;
 		max-width: 960px;
 		margin: 0 auto;
+	}
+
+	.nav-end {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 	}
 
 	.internal-links {
@@ -65,5 +76,12 @@ import HeaderLink from './HeaderLink.astro';
 
 	nav a.active {
 		border-bottom-color: var(--accent);
+	}
+
+	@media (max-width: 720px) {
+		.internal-links a:not(.active) {
+			padding-inline: 0.45rem;
+			font-size: 0.9rem;
+		}
 	}
 </style>

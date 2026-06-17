@@ -1,16 +1,58 @@
-:root {
+:root,
+[data-theme='light'] {
+	--bg: #f7f6f3;
+	--bg-elevated: #ffffff;
+	--bg-subtle: #efede8;
+	--text: #1a1d26;
+	--text-muted: #5c6578;
+	--accent: #c47f00;
+	--accent-hover: #9a6300;
+	--accent-soft: rgba(196, 127, 0, 0.12);
+	--border: rgba(26, 29, 38, 0.1);
+	--code-bg: #eceae4;
+	--header-bg: rgba(247, 246, 243, 0.88);
+	--body-glow: rgba(196, 127, 0, 0.1);
+	--shadow: 0 12px 40px rgba(26, 29, 38, 0.08);
+	--mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+	--radius: 10px;
+	color-scheme: light;
+}
+
+[data-theme='dark'] {
 	--bg: #0c0d10;
 	--bg-elevated: #14161c;
 	--bg-subtle: #1a1d26;
 	--text: #e8e6e3;
 	--text-muted: #9aa3b2;
 	--accent: #f0a500;
+	--accent-hover: #ffc44d;
 	--accent-soft: rgba(240, 165, 0, 0.14);
 	--border: rgba(255, 255, 255, 0.08);
 	--code-bg: #1e222b;
-	--mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
-	--radius: 10px;
+	--header-bg: rgba(12, 13, 16, 0.88);
+	--body-glow: rgba(240, 165, 0, 0.08);
 	--shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+	color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']):not([data-theme='dark']),
+	[data-theme='system'] {
+		--bg: #0c0d10;
+		--bg-elevated: #14161c;
+		--bg-subtle: #1a1d26;
+		--text: #e8e6e3;
+		--text-muted: #9aa3b2;
+		--accent: #f0a500;
+		--accent-hover: #ffc44d;
+		--accent-soft: rgba(240, 165, 0, 0.14);
+		--border: rgba(255, 255, 255, 0.08);
+		--code-bg: #1e222b;
+		--header-bg: rgba(12, 13, 16, 0.88);
+		--body-glow: rgba(240, 165, 0, 0.08);
+		--shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+		color-scheme: dark;
+	}
 }
 
 * {
@@ -18,7 +60,7 @@
 }
 
 html {
-	color-scheme: dark;
+	color-scheme: light dark;
 }
 
 body {
@@ -26,13 +68,16 @@ body {
 	margin: 0;
 	padding: 0;
 	background:
-		radial-gradient(ellipse 80% 50% at 50% -20%, rgba(240, 165, 0, 0.08), transparent),
+		radial-gradient(ellipse 80% 50% at 50% -20%, var(--body-glow), transparent),
 		var(--bg);
 	color: var(--text);
 	font-size: 18px;
 	line-height: 1.75;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
+	transition:
+		background 0.2s ease,
+		color 0.2s ease;
 }
 
 main {
@@ -78,7 +123,7 @@ a {
 }
 
 a:hover {
-	color: #ffc44d;
+	color: var(--accent-hover);
 }
 
 code,
@@ -163,7 +208,9 @@ ol {
 	text-decoration: none;
 	font-family: var(--mono);
 	font-size: 0.85rem;
-	transition: border-color 0.15s ease, background 0.15s ease;
+	transition:
+		border-color 0.15s ease,
+		background 0.15s ease;
 }
 
 .button:hover {
@@ -180,8 +227,8 @@ ol {
 }
 
 .button-primary:hover {
-	background: #ffc44d;
-	border-color: #ffc44d;
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
 	color: #111;
 }
 

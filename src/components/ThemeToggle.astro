@@ -1,0 +1,94 @@
+<div class="theme-toggle" role="group" aria-label="Theme">
+	<button type="button" class="theme-btn" data-theme-choice="system" aria-pressed="false" title="System theme">
+		<span class="sr-only">System theme</span>
+		<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75">
+			<rect x="2" y="3" width="20" height="14" rx="2"></rect>
+			<path d="M8 21h8M12 17v4"></path>
+		</svg>
+	</button>
+	<button type="button" class="theme-btn" data-theme-choice="light" aria-pressed="true" title="Light theme">
+		<span class="sr-only">Light theme</span>
+		<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75">
+			<circle cx="12" cy="12" r="4"></circle>
+			<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+		</svg>
+	</button>
+	<button type="button" class="theme-btn" data-theme-choice="dark" aria-pressed="false" title="Dark theme">
+		<span class="sr-only">Dark theme</span>
+		<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75">
+			<path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5z"></path>
+		</svg>
+	</button>
+</div>
+
+<script is:inline>
+	(function () {
+		const buttons = document.querySelectorAll('[data-theme-choice]');
+		const root = document.documentElement;
+
+		function getStoredTheme() {
+			return localStorage.getItem('theme') || 'light';
+		}
+
+		function setActive(theme) {
+			buttons.forEach((button) => {
+				const isActive = button.getAttribute('data-theme-choice') === theme;
+				button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+			});
+		}
+
+		function applyTheme(theme) {
+			root.setAttribute('data-theme', theme);
+			localStorage.setItem('theme', theme);
+			setActive(theme);
+		}
+
+		buttons.forEach((button) => {
+			button.addEventListener('click', () => {
+				applyTheme(button.getAttribute('data-theme-choice'));
+			});
+		});
+
+		setActive(getStoredTheme());
+	})();
+</script>
+
+<style>
+	.theme-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.15rem;
+		padding: 0.2rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: var(--bg-subtle);
+	}
+
+	.theme-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		padding: 0;
+		border: none;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--text-muted);
+		cursor: pointer;
+		transition:
+			background 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.theme-btn:hover {
+		color: var(--text);
+		background: var(--accent-soft);
+	}
+
+	.theme-btn[aria-pressed='true'] {
+		color: var(--text);
+		background: var(--bg-elevated);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+	}
+</style>
